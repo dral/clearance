@@ -6,7 +6,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'api-template',
+  title: 'clearance',
   tagline: 'Public documentation template',
   // favicon: 'img/favicon.ico',
 
@@ -14,12 +14,12 @@ const config = {
   url: 'https://dral.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: 'api-template/',
+  baseUrl: 'clearance/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'dral', // Usually your GitHub org/user name.
-  projectName: 'api-template', // Usually your repo name.
+  projectName: 'clearance', // Usually your repo name.
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -41,7 +41,7 @@ const config = {
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl: 'https://github.com/dral/api-template/edit/main/website/',
+          editUrl: 'https://github.com/dral/clearance/edit/main/website/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -84,7 +84,7 @@ const config = {
         respectPrefersColorScheme: true,
       },
       navbar: {
-        title: 'api-template',
+        title: 'clearance',
         logo: {
           alt: 'My Site Logo',
           src: 'img/logo.svg',
@@ -107,7 +107,7 @@ const config = {
             position: 'right',
           },
           {
-            href: 'https://github.com/dral/api-template',
+            href: 'https://github.com/dral/clearance',
             label: 'GitHub',
             position: 'right',
           },

@@ -9,7 +9,7 @@ sidebar_position: 7
 ### Build the image
 
 ```sh
-docker build . -t api-template:local
+docker build . -t clearance:local
 ```
 
 ### Launch a development instance of mongodb (if needed) {#mongodb}
@@ -41,12 +41,12 @@ Make sure a mongodb instance is running locally
 ```sh
 docker run \
   --rm \
-  --name api-template \
+  --name clearance \
   -p 80:8000 \
   --net local \
   --env mongoDbHost="mongodb://mongodb-dev:27017/prod" \
   --env logLevel="debug" \
-  api-template:local
+  clearance:local
 ```
 
 This will keep a running instance attached to your terminal in order to easily monitor logs and will map the internal container port 80 to your local 8000 port. Your docker running server should be available at [http://localhost:8000/](http://localhost:8000/).
@@ -57,7 +57,7 @@ This will keep a running instance attached to your terminal in order to easily m
 
 ### Publish documentation website to gh-pages
 
-- [Github pages setup](https://github.com/dral/api-template/settings/pages)
+- [Github pages setup](https://github.com/dral/clearance/settings/pages)
   - Deploy from a branch `gh-pages` `/(root)`
 
 ## Project assets

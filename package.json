@@ -1,11 +1,11 @@
 {
-  "name": "api-template",
+  "name": "clearance",
   "version": "1.0.0",
   "description": "API Template project",
   "main": "src/index.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/dral/api-template"
+    "url": "https://github.com/dral/clearance"
   },
   "engines": {
     "node": "^18"

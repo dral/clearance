@@ -16,19 +16,22 @@ export interface UserAccountMethods {
   ): Promise<UserAccount & UserAccountMethods>;
 }
 
-const schema = new mongoose.Schema<UserAccount>({
-  organisations: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'Organisation',
+const schema = new mongoose.Schema<UserAccount>(
+  {
+    organisations: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Organisation',
+      },
+    ],
+    status: {
+      type: 'string',
+      enum: ['active', 'deleted'],
+      default: 'active',
     },
-  ],
-  status: {
-    type: 'string',
-    enum: ['active', 'deleted'],
-    default: 'active',
   },
-});
+  { timestamps: true }
+);
 
 schema.methods.isInOrganisation = function (
   organisationId: Types.ObjectId

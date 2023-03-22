@@ -23,26 +23,29 @@ export interface OrganisationMethods {
   ): Promise<Organisation & OrganisationMethods>;
 }
 
-const schema = new mongoose.Schema<Organisation>({
-  name: 'string',
-  users: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'UserAccount',
+const schema = new mongoose.Schema<Organisation>(
+  {
+    name: 'string',
+    users: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'UserAccount',
+      },
+    ],
+    services: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'ServiceAccount',
+      },
+    ],
+    status: {
+      type: 'string',
+      enum: ['active', 'deleted'],
+      default: 'active',
     },
-  ],
-  services: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'ServiceAccount',
-    },
-  ],
-  status: {
-    type: 'string',
-    enum: ['active', 'deleted'],
-    default: 'active',
   },
-});
+  { timestamps: true }
+);
 
 schema.methods.hasUser = function (userId: Types.ObjectId) {
   return this.users.includes(userId);

@@ -13,19 +13,22 @@ export interface ServiceAccountMethods {
   delete(): Promise<ServiceAccount & ServiceAccountMethods>;
 }
 
-const schema = new Schema<ServiceAccount>({
-  name: 'string',
-  organisation: {
-    type: Schema.Types.ObjectId,
-    ref: 'Organisation',
-    required: true,
+const schema = new Schema<ServiceAccount>(
+  {
+    name: 'string',
+    organisation: {
+      type: Schema.Types.ObjectId,
+      ref: 'Organisation',
+      required: true,
+    },
+    status: {
+      type: 'string',
+      enum: ['active', 'inactive', 'deleted'],
+      default: 'active',
+    },
   },
-  status: {
-    type: 'string',
-    enum: ['active', 'inactive', 'deleted'],
-    default: 'active',
-  },
-});
+  { timestamps: true }
+);
 
 schema.methods.activate = function () {
   if (this.status === 'active') {

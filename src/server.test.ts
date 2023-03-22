@@ -3,8 +3,6 @@ import request from 'supertest';
 import { explode, explodeAfterResponse } from './base/error';
 import init, { setupServer } from './server';
 const server = setupServer();
-import config from 'config';
-// import logger from './logger';
 
 describe('server', () => {
   test('server initializes', async () => {

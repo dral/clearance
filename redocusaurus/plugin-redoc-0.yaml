@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  description: API Template project
+  description: Authentication and clearance management
   title: clearance
   version: 1.0.0
   license:

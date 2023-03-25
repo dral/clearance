@@ -37,7 +37,7 @@ export const AccessModel = mongoose.model<
   Model<Access, {}, AccessMethods>
 >('Access', schema);
 
-export interface SpecificAccess {
+export interface SpecificAccess extends Access {
   code: string;
 }
 
@@ -62,7 +62,7 @@ export const SpecificAccessModel = AccessModel.discriminator<
   Model<SpecificAccess, {}, AccessMethods>
 >('SpecificAccess', specificAccessesSchema);
 
-export interface AccessProfile {
+export interface AccessProfile extends Access {
   specificAccesses: Types.ObjectId[];
 }
 

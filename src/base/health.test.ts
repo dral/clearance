@@ -1,9 +1,9 @@
 import express from 'express';
 import request from 'supertest';
 import { health } from './health';
-import { setupServer } from '../server';
-import initdb from '../db';
-import init from '../server';
+import { setupServer } from 'src/server';
+import initdb from 'src/db';
+import init from 'src/server';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 

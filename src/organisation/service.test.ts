@@ -1,4 +1,4 @@
-import initdb from '../db';
+import initdb from 'src/db';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import {
@@ -165,8 +165,8 @@ describe('Manage organisation service accounts', () => {
 
   beforeAll(async () => {
     dbServer = await MongoMemoryServer.create();
-    // connection = await initdb(); // use persistent test db
-    connection = await initdb(dbServer.getUri());
+    connection = await initdb(); // use persistent test db
+    // connection = await initdb(dbServer.getUri());
   });
 
   afterAll(() => {

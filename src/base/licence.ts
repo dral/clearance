@@ -1,9 +1,9 @@
 import checker, { ModuleInfo } from 'license-checker';
-import logger from '../logger';
+import logger from 'src/logger';
 import express from 'express';
-import project from '../../package.json';
+import project from 'src/../package.json';
 
-const {name, version} = project;
+const { name, version } = project;
 
 let defaultOptions: checker.InitOpts = {
   start: '.',
@@ -19,13 +19,13 @@ let defaultOptions: checker.InitOpts = {
     licenseFile: false,
     licenseText: false,
     licenseModified: 'no',
-    path: false
-  }
+    path: false,
+  },
 };
 
 class licenseInfo {
   report: checker.ModuleInfos = {};
-  licenceCountPerType:Record<string, object[]> = {};
+  licenceCountPerType: Record<string, object[]> = {};
   self: ModuleInfo = {};
   options: checker.InitOpts;
   initialized: boolean;
@@ -34,7 +34,7 @@ class licenseInfo {
     this.options = options;
     this.initialized = false;
   }
-  
+
   init() {
     return new Promise((accept, reject) => {
       checker.init(this.options, (err, packages) => {
@@ -87,7 +87,10 @@ export const infos = new licenseInfo();
  *       200:
  *         description: This project's licence
  */
-export const selfLicense = async (_: express.Request, res: express.Response) => {
+export const selfLicense = async (
+  _: express.Request,
+  res: express.Response
+) => {
   const self = await infos.getSelf();
   return res.json(self);
 };
@@ -128,20 +131,22 @@ router.get('/licenses/summary', summary);
 
 export default router;
 
-export const licenceCount = (report: checker.ModuleInfos):  Record<string, object[]> => {
-  let counter: Record<string, object[]> = { unknown : []};
+export const licenceCount = (
+  report: checker.ModuleInfos
+): Record<string, object[]> => {
+  let counter: Record<string, object[]> = { unknown: [] };
 
-  Object.values(report).forEach(moduleInfo => {
+  Object.values(report).forEach((moduleInfo) => {
     const { licenses, name, version, description } = moduleInfo;
     const info = { name, version, description };
     if (!licenses) {
       counter.unknown.push(info);
     } else if (typeof licenses === 'string') {
-      counter[licenses] = (counter[licenses] || []);
+      counter[licenses] = counter[licenses] || [];
       counter[licenses].push(info);
     } else {
-      licenses.forEach(license => {
-        counter[license] = (counter[license] || []);
+      licenses.forEach((license) => {
+        counter[license] = counter[license] || [];
         counter[license].push(info);
       });
     }

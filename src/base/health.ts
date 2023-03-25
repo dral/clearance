@@ -1,6 +1,6 @@
 import express from 'express';
-import { isAlive as serverOK } from '../server';
-import { isAlive as dbOk } from '../db';
+import { isAlive as serverOK } from 'src/server';
+import { isAlive as dbOk } from 'src/db';
 /**
  * @openapi
  * /health:

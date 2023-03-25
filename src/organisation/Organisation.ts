@@ -42,6 +42,7 @@ const schema = new mongoose.Schema<Organisation>(
       type: 'string',
       enum: ['active', 'deleted'],
       default: 'active',
+      required: true,
     },
   },
   { timestamps: true }

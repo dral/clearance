@@ -1,7 +1,7 @@
 import { AccessModel, AccessProfileModel, SpecificAccessModel } from './Access';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import initdb from '../db';
+import initdb from 'src/db';
 
 describe('db connection', () => {
   let dbServer: MongoMemoryServer;

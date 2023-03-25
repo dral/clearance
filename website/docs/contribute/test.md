@@ -51,7 +51,7 @@ export default router;
 ```ts title="myRouter.test.ts"
 import request from 'supertest';
 import router from './myRouter';
-import { setupServer } from '../server';
+import { setupServer } from 'src/server';
 
 const server = setupServer(app);
 
@@ -77,7 +77,7 @@ export const User = mongoose.model('User', schema);
 ```
 
 ```ts title="someRepository.test.ts"
-import initdb from '../db';
+import initdb from 'src/db';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { User } from './someRepository';

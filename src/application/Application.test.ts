@@ -1,4 +1,4 @@
-import initdb from '../db';
+import initdb from 'src/db';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { Application } from './Application';

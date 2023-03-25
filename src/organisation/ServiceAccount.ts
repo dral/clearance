@@ -25,6 +25,7 @@ const schema = new Schema<ServiceAccount>(
       type: 'string',
       enum: ['active', 'inactive', 'deleted'],
       default: 'active',
+      required: true,
     },
   },
   { timestamps: true }

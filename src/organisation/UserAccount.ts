@@ -28,6 +28,7 @@ const schema = new mongoose.Schema<UserAccount>(
       type: 'string',
       enum: ['active', 'deleted'],
       default: 'active',
+      required: true,
     },
   },
   { timestamps: true }

@@ -11,7 +11,7 @@
     "node": "^18"
   },
   "scripts": {
-    "prod": "NODE_ENV=production node dist/src/index.js",
+    "prod": "NODE_PATH=dist NODE_ENV=production node dist/src/index.js",
     "start": "ts-node src/index.ts",
     "watch": "nodemon",
     "build": "tsc --project tsconfig.production.json",
@@ -51,6 +51,7 @@
     "supertest": "^6.3.3",
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.1.2",
     "typescript": "^4.9.5"
   },
   "dependencies": {

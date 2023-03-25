@@ -26,15 +26,13 @@ export const error = (
   return res.status(500).json({ message });
 };
 
-export const explode =
-  (message = 'Intentional unhandled error') =>
-  () => {
-    throw new Error(message);
-  };
+// prettier-ignore
+export const explode = (message = 'Intentional unhandled error') => () => {
+  throw new Error(message);
+};
 
-export const explodeAfterResponse =
-  (message = 'Intentional unhandled error') =>
-  (_: express.Request, res: express.Response) => {
-    res.sendStatus(200);
-    throw new Error(message);
-  };
+// prettier-ignore
+export const explodeAfterResponse = (message = 'Intentional unhandled error') => (_: express.Request, res: express.Response) => {
+  res.sendStatus(200);
+  throw new Error(message);
+};

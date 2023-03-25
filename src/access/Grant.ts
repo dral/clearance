@@ -1,5 +1,5 @@
 import mongoose, { Types, Schema, Model } from 'mongoose';
-import { AccessMethods, AccessModel } from './Access';
+import { AccessModel } from './Access';
 
 export interface Grant {
   _id: Types.ObjectId;

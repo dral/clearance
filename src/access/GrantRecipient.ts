@@ -1,7 +1,5 @@
 import mongoose, { Types, Schema, Model } from 'mongoose';
 
-// TODO remove organisation
-// TODO add a getRecipient that finds or createsa a new recipient
 export interface GrantRecipient {
   _id: Types.ObjectId;
 }

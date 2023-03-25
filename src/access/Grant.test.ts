@@ -4,9 +4,7 @@ import initdb from 'src/db';
 import {
   GrantRecipientModel,
   ServiceGrantRecipient,
-  ServiceGrantRecipientModel,
   UserGrantRecipient,
-  UserGrantRecipientModel,
 } from './GrantRecipient';
 import { UserAccount } from 'src/organisation/UserAccount';
 import { Organisation } from 'src/organisation/Organisation';

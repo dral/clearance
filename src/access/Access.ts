@@ -26,11 +26,6 @@ const schema = new mongoose.Schema<Access>(
   { timestamps: true, discriminatorKey: 'kind' }
 );
 
-schema.methods.accessList = function () {
-  // TODO use specific method
-  return Promise.reject('should never get here');
-};
-
 export const AccessModel = mongoose.model<
   Access,
   // eslint-disable-next-line @typescript-eslint/ban-types

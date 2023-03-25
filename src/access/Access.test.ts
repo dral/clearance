@@ -150,4 +150,28 @@ describe('db connection', () => {
       [accessCode1, updatedCode2].sort()
     );
   });
+
+  it('should have no acces on an inactive profile access', async () => {
+    const accessCode1 = 'toto';
+    let specificAccess1 = await new SpecificAccessModel({
+      code: accessCode1,
+    }).save();
+
+    const accessCode2 = 'titi';
+    let specificAccess2 = await new SpecificAccessModel({
+      code: accessCode2,
+    }).save();
+
+    let accessProfile = await new AccessProfileModel({
+      specificAccesses: [specificAccess1._id, specificAccess2._id],
+      status: 'inactive',
+    }).save();
+
+    // update code for specificAcces2
+    const updatedCode2 = 'tutu';
+    specificAccess2.code = updatedCode2;
+    await specificAccess2.save();
+
+    expect((await accessProfile.accessList()).sort()).toMatchObject([]);
+  });
 });

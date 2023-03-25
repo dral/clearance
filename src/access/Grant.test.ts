@@ -62,14 +62,14 @@ describe('db connection', () => {
       specificAccesses: [access2._id, access3._id],
     }).save();
 
-    userRecipient = await new UserGrantRecipientModel({
-      organisation: defaultOrganisation._id,
-      userAccount: defaultUser._id,
-    }).save();
+    userRecipient = await GrantRecipientModel.getUserAccountRecipient(
+      defaultOrganisation._id,
+      defaultUser._id
+    );
 
-    serviceRecipient = await new ServiceGrantRecipientModel({
-      serviceAccount: defaultServiceAccount._id,
-    }).save();
+    serviceRecipient = await GrantRecipientModel.getServiceAccountRecipient(
+      defaultServiceAccount._id
+    );
   });
 
   afterAll(async () => {
@@ -124,12 +124,13 @@ describe('db connection', () => {
   });
 
   it('should find all accesses for an user', async () => {
-    const userGrant1 = await new GrantModel({
+    // grant access to user
+    await new GrantModel({
       recipient: userRecipient._id,
       access: access1._id,
       type: 'permanent',
     }).save();
-    const userGrant2 = await new GrantModel({
+    await new GrantModel({
       recipient: userRecipient._id,
       access: accessProfile._id,
       type: 'permanent',

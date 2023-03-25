@@ -6,19 +6,59 @@ export interface GrantRecipient {
   _id: Types.ObjectId;
 }
 
+interface GrantRecipientModel
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  extends Model<GrantRecipient, {}, GrantRecipientMethods> {
+  getUserAccountRecipient(
+    organisation: Types.ObjectId,
+    userAccount: Types.ObjectId
+  ): Promise<UserGrantRecipient>;
+  getServiceAccountRecipient(
+    serviceAccount: Types.ObjectId
+  ): Promise<ServiceGrantRecipient>;
+}
+
 export interface GrantRecipientMethods {
   accessList(asOf: Date): Promise<string[]>;
 }
-const schema = new mongoose.Schema<GrantRecipient>(
+const schema = new mongoose.Schema<GrantRecipient, GrantRecipientModel>(
   {},
   { timestamps: true, discriminatorKey: 'kind' }
 );
 
+schema.static(
+  'getUserAccountRecipient',
+  async function (organisation: Types.ObjectId, userAccount: Types.ObjectId) {
+    let existing = await UserGrantRecipientModel.findOne({
+      organisation,
+      userAccount,
+    });
+    if (existing) {
+      return Promise.resolve(existing);
+    }
+    return new UserGrantRecipientModel({ organisation, userAccount }).save();
+  }
+);
+
+schema.static(
+  'getServiceAccountRecipient',
+  async function (serviceAccount: Types.ObjectId) {
+    let existing = await ServiceGrantRecipientModel.findOne({
+      serviceAccount,
+    });
+    if (existing) {
+      return Promise.resolve(existing);
+    }
+    return new ServiceGrantRecipientModel({ serviceAccount }).save();
+  }
+);
+
 export const GrantRecipientModel = mongoose.model<
   GrantRecipient,
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  Model<GrantRecipient, {}, GrantRecipientMethods>
+  GrantRecipientModel
 >('GrantRecipient', schema);
+
+// UserAccount recipient
 
 export interface UserGrantRecipient extends GrantRecipient {
   organisation: Types.ObjectId;
@@ -48,6 +88,8 @@ export const UserGrantRecipientModel = GrantRecipientModel.discriminator<
   // eslint-disable-next-line @typescript-eslint/ban-types
   Model<UserGrantRecipient, {}, GrantRecipientMethods>
 >('UserGrantRecipient', UserGrantRecipientSchema);
+
+// ServiceAccount recipient
 
 export interface ServiceGrantRecipient extends GrantRecipient {
   serviceAccount: Types.ObjectId;

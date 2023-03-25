@@ -75,7 +75,6 @@ describe('db connection', () => {
 
   it('should create a Grant recipient from an serviceAccount in a given organisation', async () => {
     const serviceAccountRecipient = await new ServiceGrantRecipientModel({
-      organisation: defaultOrganisation._id,
       serviceAccount: defaultServiceAccount._id,
     }).save();
     expect(serviceAccountRecipient.serviceAccount).toBe(
@@ -89,5 +88,68 @@ describe('db connection', () => {
         // serviceAccount: defaultServiceAccount._id,
       }).save();
     }).rejects.toThrow();
+  });
+
+  it('should get a userAccount recipient from its id and organisation', async () => {
+    const userRecipient = await new UserGrantRecipientModel({
+      organisation: defaultOrganisation._id,
+      userAccount: defaultUser._id,
+    }).save();
+
+    const foundRecipient = await GrantRecipientModel.getUserAccountRecipient(
+      defaultOrganisation._id,
+      defaultUser._id
+    );
+    expect(foundRecipient._id).toEqual(userRecipient._id);
+  });
+
+  it('should create a new userAccount recipient if none exist', async () => {
+    const foundRecipient = await GrantRecipientModel.getUserAccountRecipient(
+      defaultOrganisation._id,
+      defaultUser._id
+    );
+    expect(foundRecipient._id).not.toBeNull();
+  });
+
+  it('should not create a new userAccount recipient twice', async () => {
+    const firstRecipient = await GrantRecipientModel.getUserAccountRecipient(
+      defaultOrganisation._id,
+      defaultUser._id
+    );
+    const secondRecipient = await GrantRecipientModel.getUserAccountRecipient(
+      defaultOrganisation._id,
+      defaultUser._id
+    );
+    expect(firstRecipient._id).toEqual(secondRecipient._id);
+  });
+
+  it('should get a serviceAccount recipient from its id', async () => {
+    const serviceAccountRecipient = await new ServiceGrantRecipientModel({
+      serviceAccount: defaultServiceAccount._id,
+    }).save();
+
+    const foundRecipient = await GrantRecipientModel.getServiceAccountRecipient(
+      defaultServiceAccount._id
+    );
+
+    expect(foundRecipient._id).toEqual(serviceAccountRecipient._id);
+  });
+
+  it('should create a new serviceAccount recipient if none exist', async () => {
+    const foundRecipient = await GrantRecipientModel.getServiceAccountRecipient(
+      defaultServiceAccount._id
+    );
+    expect(foundRecipient._id).not.toBeNull();
+  });
+
+  it('should not create a new serviceAccount recipient twice', async () => {
+    const firstRecipient = await GrantRecipientModel.getServiceAccountRecipient(
+      defaultServiceAccount._id
+    );
+    const secondRecipient =
+      await GrantRecipientModel.getServiceAccountRecipient(
+        defaultServiceAccount._id
+      );
+    expect(firstRecipient._id).toEqual(secondRecipient._id);
   });
 });

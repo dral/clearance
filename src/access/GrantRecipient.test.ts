@@ -3,8 +3,8 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import initdb from 'src/db';
 import {
   GrantRecipientModel,
-  ServiceGrantRecipientModel,
-  UserGrantRecipientModel,
+  ServiceAccountRecipientModel,
+  UserAccountRecipientModel,
 } from './GrantRecipient';
 import { UserAccount } from 'src/organisation/UserAccount';
 import { Organisation } from 'src/organisation/Organisation';
@@ -18,7 +18,7 @@ describe('db connection', () => {
   let dbServer: MongoMemoryServer;
   let connection: mongoose.Connection;
 
-  let defaultUser: UserAccount;
+  let defaultUserAccount: UserAccount;
   let defaultOrganisation: Organisation;
   let defaultServiceAccount: ServiceAccount;
 
@@ -28,7 +28,7 @@ describe('db connection', () => {
     connection = await initdb(dbServer.getUri());
 
     let { user, organisation } = await createUserAccountWithOrganisation();
-    defaultUser = user;
+    defaultUserAccount = user;
     defaultOrganisation = organisation;
     let { service } = await addServiceAccountToOrganisation(
       'some service',
@@ -48,25 +48,25 @@ describe('db connection', () => {
   });
 
   it('should create a Grant recipient from an user in a given organisation', async () => {
-    const userRecipient = await new UserGrantRecipientModel({
+    const userRecipient = await new UserAccountRecipientModel({
       organisation: defaultOrganisation._id,
-      userAccount: defaultUser._id,
+      userAccount: defaultUserAccount._id,
     }).save();
-    expect(userRecipient.userAccount).toBe(defaultUser._id);
+    expect(userRecipient.userAccount).toBe(defaultUserAccount._id);
   });
 
   it('should fail creating a Grant recipient from an user without an organisation', async () => {
     await expect(() => {
-      return new UserGrantRecipientModel({
+      return new UserAccountRecipientModel({
         // organisation: defaultOrganisation._id,
-        userAccount: defaultUser._id,
+        userAccount: defaultUserAccount._id,
       }).save();
     }).rejects.toThrow();
   });
 
   it('should fail creating a Grant recipient from an user without an user', async () => {
     await expect(() => {
-      return new UserGrantRecipientModel({
+      return new UserAccountRecipientModel({
         organisation: defaultOrganisation._id,
         // userAccount: defaultUser._id,
       }).save();
@@ -74,7 +74,7 @@ describe('db connection', () => {
   });
 
   it('should create a Grant recipient from an serviceAccount in a given organisation', async () => {
-    const serviceAccountRecipient = await new ServiceGrantRecipientModel({
+    const serviceAccountRecipient = await new ServiceAccountRecipientModel({
       serviceAccount: defaultServiceAccount._id,
     }).save();
     expect(serviceAccountRecipient.serviceAccount).toBe(
@@ -84,21 +84,21 @@ describe('db connection', () => {
 
   it('should fail creating a Grant recipient from a service account without an service account', async () => {
     await expect(() => {
-      return new ServiceGrantRecipientModel({
+      return new ServiceAccountRecipientModel({
         // serviceAccount: defaultServiceAccount._id,
       }).save();
     }).rejects.toThrow();
   });
 
   it('should get a userAccount recipient from its id and organisation', async () => {
-    const userRecipient = await new UserGrantRecipientModel({
+    const userRecipient = await new UserAccountRecipientModel({
       organisation: defaultOrganisation._id,
-      userAccount: defaultUser._id,
+      userAccount: defaultUserAccount._id,
     }).save();
 
     const foundRecipient = await GrantRecipientModel.getUserAccountRecipient(
       defaultOrganisation._id,
-      defaultUser._id
+      defaultUserAccount._id
     );
     expect(foundRecipient._id).toEqual(userRecipient._id);
   });
@@ -106,7 +106,7 @@ describe('db connection', () => {
   it('should create a new userAccount recipient if none exist', async () => {
     const foundRecipient = await GrantRecipientModel.getUserAccountRecipient(
       defaultOrganisation._id,
-      defaultUser._id
+      defaultUserAccount._id
     );
     expect(foundRecipient._id).not.toBeNull();
   });
@@ -114,17 +114,17 @@ describe('db connection', () => {
   it('should not create a new userAccount recipient twice', async () => {
     const firstRecipient = await GrantRecipientModel.getUserAccountRecipient(
       defaultOrganisation._id,
-      defaultUser._id
+      defaultUserAccount._id
     );
     const secondRecipient = await GrantRecipientModel.getUserAccountRecipient(
       defaultOrganisation._id,
-      defaultUser._id
+      defaultUserAccount._id
     );
     expect(firstRecipient._id).toEqual(secondRecipient._id);
   });
 
   it('should get a serviceAccount recipient from its id', async () => {
-    const serviceAccountRecipient = await new ServiceGrantRecipientModel({
+    const serviceAccountRecipient = await new ServiceAccountRecipientModel({
       serviceAccount: defaultServiceAccount._id,
     }).save();
 

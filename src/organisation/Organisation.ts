@@ -9,17 +9,19 @@ export interface Organisation {
 }
 
 export interface OrganisationMethods {
-  hasUser(userId: Types.ObjectId): boolean;
-  addUser(userId: Types.ObjectId): Promise<Organisation & OrganisationMethods>;
-  removeUser(
-    userId: Types.ObjectId
+  hasUser(userAccount: Types.ObjectId): boolean;
+  addUser(
+    userAccount: Types.ObjectId
   ): Promise<Organisation & OrganisationMethods>;
-  hasService(serviceId: Types.ObjectId): boolean;
+  removeUser(
+    userAccount: Types.ObjectId
+  ): Promise<Organisation & OrganisationMethods>;
+  hasService(serviceAccount: Types.ObjectId): boolean;
   addService(
-    serviceId: Types.ObjectId
+    serviceAccount: Types.ObjectId
   ): Promise<Organisation & OrganisationMethods>;
   deleteService(
-    serviceId: Types.ObjectId
+    serviceAccount: Types.ObjectId
   ): Promise<Organisation & OrganisationMethods>;
 }
 
@@ -48,23 +50,23 @@ const schema = new mongoose.Schema<Organisation>(
   { timestamps: true }
 );
 
-schema.methods.hasUser = function (userId: Types.ObjectId) {
-  return this.users.includes(userId);
+schema.methods.hasUser = function (userAccount: Types.ObjectId) {
+  return this.users.includes(userAccount);
 };
 
-schema.methods.addUser = function (userId: Types.ObjectId) {
-  if (this.hasUser(userId)) {
+schema.methods.addUser = function (userAccount: Types.ObjectId) {
+  if (this.hasUser(userAccount)) {
     return Promise.resolve(this);
   }
-  this.users.push(userId);
+  this.users.push(userAccount);
   return this.save();
 };
 
-schema.methods.removeUser = function (userId: Types.ObjectId) {
-  if (!this.hasUser(userId)) {
+schema.methods.removeUser = function (userAccount: Types.ObjectId) {
+  if (!this.hasUser(userAccount)) {
     return Promise.resolve(this);
   }
-  this.users.remove(userId);
+  this.users.remove(userAccount);
 
   if (this.users.length === 0) {
     this.status = 'deleted';
@@ -73,24 +75,24 @@ schema.methods.removeUser = function (userId: Types.ObjectId) {
   return this.save();
 };
 
-schema.methods.hasService = function (serviceId: Types.ObjectId) {
-  return this.services.includes(serviceId);
+schema.methods.hasService = function (serviceAccount: Types.ObjectId) {
+  return this.services.includes(serviceAccount);
 };
 
-schema.methods.addService = function (serviceId: Types.ObjectId) {
-  if (this.hasService(serviceId)) {
+schema.methods.addService = function (serviceAccount: Types.ObjectId) {
+  if (this.hasService(serviceAccount)) {
     return Promise.resolve(this);
   }
-  this.services.push(serviceId);
+  this.services.push(serviceAccount);
   return this.save();
 };
 
-schema.methods.deleteService = function (serviceId: Types.ObjectId) {
-  if (!this.hasService(serviceId)) {
+schema.methods.deleteService = function (serviceAccount: Types.ObjectId) {
+  if (!this.hasService(serviceAccount)) {
     return Promise.resolve(this);
   }
 
-  this.services.remove(serviceId);
+  this.services.remove(serviceAccount);
   return this.save();
 };
 

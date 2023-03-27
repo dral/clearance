@@ -15,20 +15,20 @@ import { ServiceAccountModel } from './ServiceAccount';
 // User management
 
 export const addUserAccountToOrganisation = async (
-  userId: Types.ObjectId,
-  organisationId: Types.ObjectId
+  userAccount: Types.ObjectId,
+  organisation: Types.ObjectId
 ) => {
-  let user = await UserAccountModel.findById(userId);
-  let organisation = await OrganisationModel.findById(organisationId);
+  let foundUserAccount = await UserAccountModel.findById(userAccount);
+  let foundOrganisation = await OrganisationModel.findById(organisation);
 
-  if (!user || !organisation) {
+  if (!foundUserAccount || !foundOrganisation) {
     throw new Error(
-      `Expecting user and organisation to exist. user:${userId} organisation:${organisationId}`
+      `Expecting user and organisation to exist. user:${userAccount} organisation:${organisation}`
     );
   }
 
-  const updatedUser = await user.addToOrganisation(organisationId);
-  const updatedOrganisation = await organisation.addUser(userId);
+  const updatedUser = await foundUserAccount.addToOrganisation(organisation);
+  const updatedOrganisation = await foundOrganisation.addUser(userAccount);
 
   return {
     user: updatedUser,
@@ -44,28 +44,28 @@ export const createUserAccountWithOrganisation = async () => {
 };
 
 export const createUserAccountInExistingOrganisation = async (
-  organisationId: Types.ObjectId
+  organisation: Types.ObjectId
 ) => {
   let user = await new UserAccountModel().save();
 
-  return addUserAccountToOrganisation(user._id, organisationId);
+  return addUserAccountToOrganisation(user._id, organisation);
 };
 
 export const leaveOrganisation = async (
-  userId: Types.ObjectId,
-  organisationId: Types.ObjectId
+  userAccount: Types.ObjectId,
+  organisation: Types.ObjectId
 ) => {
-  let user = await UserAccountModel.findById(userId);
-  let organisation = await OrganisationModel.findById(organisationId);
+  let foundUserAccount = await UserAccountModel.findById(userAccount);
+  let foundOrganisation = await OrganisationModel.findById(organisation);
 
-  if (!user || !organisation) {
+  if (!foundUserAccount || !foundOrganisation) {
     throw new Error(
-      `Expecting user and organisation to exist. user:${user} organisation:${organisation}`
+      `Expecting user and organisation to exist. user:${foundUserAccount} organisation:${foundOrganisation}`
     );
   }
 
-  const updatedUser = await user.leaveOrganisation(organisationId);
-  const updatedOrganisation = await organisation.removeUser(userId);
+  const updatedUser = await foundUserAccount.leaveOrganisation(organisation);
+  const updatedOrganisation = await foundOrganisation.removeUser(userAccount);
 
   return {
     user: updatedUser,
@@ -77,69 +77,79 @@ export const leaveOrganisation = async (
 
 export const addServiceAccountToOrganisation = async (
   name: string,
-  organisationId: Types.ObjectId
+  organisation: Types.ObjectId
 ) => {
-  let organisation = await OrganisationModel.findById(organisationId);
+  let foundOrganisation = await OrganisationModel.findById(organisation);
 
-  if (!organisation) {
+  if (!foundOrganisation) {
     throw new Error(
-      `Expecting organisation to exist. organisation:${organisationId}`
+      `Expecting organisation to exist. organisation:${organisation}`
     );
   }
 
-  const service = await new ServiceAccountModel({
+  const serviceAccount = await new ServiceAccountModel({
     name,
-    organisation: organisationId,
+    organisation,
   }).save();
 
-  const updatedOrganisation = await organisation.addService(service._id);
+  const updatedOrganisation = await foundOrganisation.addService(
+    serviceAccount._id
+  );
 
   return {
-    service,
+    service: serviceAccount,
     organisation: updatedOrganisation,
   };
 };
 
-export const deactivateServiceAccount = async (serviceId: Types.ObjectId) => {
-  let service = await ServiceAccountModel.findById(serviceId);
+export const deactivateServiceAccount = async (
+  serviceAccount: Types.ObjectId
+) => {
+  let foundServiceAccount = await ServiceAccountModel.findById(serviceAccount);
 
-  if (!service) {
+  if (!foundServiceAccount) {
     throw new Error(
-      `Expecting service account to exist. service account:${serviceId}`
+      `Expecting service account to exist. service account:${serviceAccount}`
     );
   }
-  return service.deactivate();
+  return foundServiceAccount.deactivate();
 };
 
-export const activateServiceAccount = async (serviceId: Types.ObjectId) => {
-  let service = await ServiceAccountModel.findById(serviceId);
+export const activateServiceAccount = async (
+  serviceAccount: Types.ObjectId
+) => {
+  let foundServiceAccount = await ServiceAccountModel.findById(serviceAccount);
 
-  if (!service) {
+  if (!foundServiceAccount) {
     throw new Error(
-      `Expecting service account to exist. service account:${serviceId}`
+      `Expecting service account to exist. service account:${serviceAccount}`
     );
   }
-  return service.activate();
+  return foundServiceAccount.activate();
 };
 
-export const deleteServiceAccount = async (serviceId: Types.ObjectId) => {
-  let service = await ServiceAccountModel.findById(serviceId);
+export const deleteServiceAccount = async (serviceAccount: Types.ObjectId) => {
+  let foundServiceAccount = await ServiceAccountModel.findById(serviceAccount);
 
-  if (!service) {
+  if (!foundServiceAccount) {
     throw new Error(
-      `Expecting service account to exist. service account:${serviceId}`
+      `Expecting service account to exist. service account:${serviceAccount}`
     );
   }
 
-  let organisation = await OrganisationModel.findById(service.organisation);
-  if (!organisation) {
+  let foundOrganisation = await OrganisationModel.findById(
+    foundServiceAccount.organisation
+  );
+  if (!foundOrganisation) {
     throw new Error(
-      `Unexpected missing organisation for service. service:${serviceId} organisation:${service.organisation}`
+      `Unexpected missing organisation for service. service:${serviceAccount} organisation:${foundServiceAccount.organisation}`
     );
   }
 
-  const updatedOrganisation = await organisation.deleteService(serviceId);
-  const updatedService = await service.delete();
+  const updatedOrganisation = await foundOrganisation.deleteService(
+    serviceAccount
+  );
+  const updatedService = await foundServiceAccount.delete();
 
   return {
     service: updatedService,

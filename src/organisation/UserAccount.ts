@@ -7,12 +7,12 @@ export interface UserAccount {
 }
 
 export interface UserAccountMethods {
-  isInOrganisation(organisationId: Types.ObjectId): boolean;
+  isInOrganisation(organisation: Types.ObjectId): boolean;
   addToOrganisation(
-    organisationId: Types.ObjectId
+    organisation: Types.ObjectId
   ): Promise<UserAccount & UserAccountMethods>;
   leaveOrganisation(
-    organisationId: Types.ObjectId
+    organisation: Types.ObjectId
   ): Promise<UserAccount & UserAccountMethods>;
 }
 
@@ -35,24 +35,24 @@ const schema = new mongoose.Schema<UserAccount>(
 );
 
 schema.methods.isInOrganisation = function (
-  organisationId: Types.ObjectId
+  organisation: Types.ObjectId
 ): boolean {
-  return this.organisations.includes(organisationId);
+  return this.organisations.includes(organisation);
 };
 
-schema.methods.addToOrganisation = function (organisationId: Types.ObjectId) {
-  if (this.isInOrganisation(organisationId)) {
+schema.methods.addToOrganisation = function (organisation: Types.ObjectId) {
+  if (this.isInOrganisation(organisation)) {
     return Promise.resolve(this);
   }
-  this.organisations.push(organisationId);
+  this.organisations.push(organisation);
   return this.save();
 };
 
-schema.methods.leaveOrganisation = function (organisationId: Types.ObjectId) {
-  if (!this.isInOrganisation(organisationId)) {
+schema.methods.leaveOrganisation = function (organisation: Types.ObjectId) {
+  if (!this.isInOrganisation(organisation)) {
     return Promise.resolve(this);
   }
-  this.organisations.remove(organisationId);
+  this.organisations.remove(organisation);
   return this.save();
 };
 

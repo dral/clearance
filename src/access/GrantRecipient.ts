@@ -10,10 +10,10 @@ interface GrantRecipientModel
   getUserAccountRecipient(
     organisation: Types.ObjectId,
     userAccount: Types.ObjectId
-  ): Promise<UserGrantRecipient>;
+  ): Promise<UserAccountRecipient>;
   getServiceAccountRecipient(
     serviceAccount: Types.ObjectId
-  ): Promise<ServiceGrantRecipient>;
+  ): Promise<ServiceAccountRecipient>;
 }
 
 export interface GrantRecipientMethods {
@@ -28,27 +28,27 @@ const schema = new mongoose.Schema<GrantRecipient, GrantRecipientModel>(
 schema.static(
   'getUserAccountRecipient',
   async function (organisation: Types.ObjectId, userAccount: Types.ObjectId) {
-    let existing = await UserGrantRecipientModel.findOne({
+    let existing = await UserAccountRecipientModel.findOne({
       organisation,
       userAccount,
     });
     if (existing) {
       return Promise.resolve(existing);
     }
-    return new UserGrantRecipientModel({ organisation, userAccount }).save();
+    return new UserAccountRecipientModel({ organisation, userAccount }).save();
   }
 );
 
 schema.static(
   'getServiceAccountRecipient',
   async function (serviceAccount: Types.ObjectId) {
-    let existing = await ServiceGrantRecipientModel.findOne({
+    let existing = await ServiceAccountRecipientModel.findOne({
       serviceAccount,
     });
     if (existing) {
       return Promise.resolve(existing);
     }
-    return new ServiceGrantRecipientModel({ serviceAccount }).save();
+    return new ServiceAccountRecipientModel({ serviceAccount }).save();
   }
 );
 
@@ -59,12 +59,12 @@ export const GrantRecipientModel = mongoose.model<
 
 // UserAccount recipient
 
-export interface UserGrantRecipient extends GrantRecipient {
+export interface UserAccountRecipient extends GrantRecipient {
   organisation: Types.ObjectId;
   userAccount: Types.ObjectId;
 }
 
-const UserGrantRecipientSchema = new mongoose.Schema<UserGrantRecipient>({
+const UserGrantRecipientSchema = new mongoose.Schema<UserAccountRecipient>({
   organisation: {
     type: Schema.Types.ObjectId,
     ref: 'Organisation',
@@ -82,29 +82,30 @@ UserGrantRecipientSchema.index(
   { unique: true }
 );
 
-export const UserGrantRecipientModel = GrantRecipientModel.discriminator<
-  UserGrantRecipient,
+export const UserAccountRecipientModel = GrantRecipientModel.discriminator<
+  UserAccountRecipient,
   // eslint-disable-next-line @typescript-eslint/ban-types
-  Model<UserGrantRecipient, {}, GrantRecipientMethods>
+  Model<UserAccountRecipient, {}, GrantRecipientMethods>
 >('UserGrantRecipient', UserGrantRecipientSchema);
 
 // ServiceAccount recipient
 
-export interface ServiceGrantRecipient extends GrantRecipient {
+export interface ServiceAccountRecipient extends GrantRecipient {
   serviceAccount: Types.ObjectId;
 }
 
-const ServiceGrantRecipientSchema = new mongoose.Schema<ServiceGrantRecipient>({
-  serviceAccount: {
-    type: Schema.Types.ObjectId,
-    ref: 'ServiceAccount',
-    required: true,
-    index: true,
-  },
-});
+const ServiceGrantRecipientSchema =
+  new mongoose.Schema<ServiceAccountRecipient>({
+    serviceAccount: {
+      type: Schema.Types.ObjectId,
+      ref: 'ServiceAccount',
+      required: true,
+      index: true,
+    },
+  });
 
-export const ServiceGrantRecipientModel = GrantRecipientModel.discriminator<
-  ServiceGrantRecipient,
+export const ServiceAccountRecipientModel = GrantRecipientModel.discriminator<
+  ServiceAccountRecipient,
   // eslint-disable-next-line @typescript-eslint/ban-types
-  Model<ServiceGrantRecipient, {}, GrantRecipientMethods>
+  Model<ServiceAccountRecipient, {}, GrantRecipientMethods>
 >('ServiceGrantRecipient', ServiceGrantRecipientSchema);

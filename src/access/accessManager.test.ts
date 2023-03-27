@@ -23,7 +23,7 @@ describe('db connection', () => {
   let dbServer: MongoMemoryServer;
   let connection: mongoose.Connection;
 
-  let defaultUser: UserAccount;
+  let defaultUserAccount: UserAccount;
   let defaultOrganisation: Organisation;
   let defaultServiceAccount: ServiceAccount;
 
@@ -39,7 +39,7 @@ describe('db connection', () => {
     connection = await initdb(dbServer.getUri());
 
     let { user, organisation } = await createUserAccountWithOrganisation();
-    defaultUser = user;
+    defaultUserAccount = user;
     defaultOrganisation = organisation;
     let { service } = await addServiceAccountToOrganisation(
       'some service',
@@ -88,13 +88,13 @@ describe('db connection', () => {
 
     await grantPermanentAccessToUserAccount(
       defaultOrganisation._id,
-      defaultUser._id,
+      defaultUserAccount._id,
       profile._id
     );
 
     const recipient = await GrantRecipientModel.getUserAccountRecipient(
       defaultOrganisation._id,
-      defaultUser._id
+      defaultUserAccount._id
     );
 
     let accessList = await GrantModel.findAccessForRecipient(recipient._id);
@@ -116,13 +116,13 @@ describe('db connection', () => {
     await grantTemporarytAccessToUserAccount(
       tomorrow,
       defaultOrganisation._id,
-      defaultUser._id,
+      defaultUserAccount._id,
       profile._id
     );
 
     const recipient = await GrantRecipientModel.getUserAccountRecipient(
       defaultOrganisation._id,
-      defaultUser._id
+      defaultUserAccount._id
     );
 
     let todayAccessList = await GrantModel.findAccessForRecipient(

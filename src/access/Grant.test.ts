@@ -3,8 +3,8 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import initdb from 'src/db';
 import {
   GrantRecipientModel,
-  ServiceGrantRecipient,
-  UserGrantRecipient,
+  ServiceAccountRecipient,
+  UserAccountRecipient,
 } from './GrantRecipient';
 import { UserAccount } from 'src/organisation/UserAccount';
 import { Organisation } from 'src/organisation/Organisation';
@@ -26,12 +26,12 @@ describe('db connection', () => {
   let dbServer: MongoMemoryServer;
   let connection: mongoose.Connection;
 
-  let defaultUser: UserAccount;
+  let defaultUserAccount: UserAccount;
   let defaultOrganisation: Organisation;
   let defaultServiceAccount: ServiceAccount;
 
-  let userRecipient: UserGrantRecipient;
-  let serviceRecipient: ServiceGrantRecipient;
+  let userRecipient: UserAccountRecipient;
+  let serviceRecipient: ServiceAccountRecipient;
 
   let access1: SpecificAccess;
   let access2: SpecificAccess;
@@ -50,7 +50,7 @@ describe('db connection', () => {
     connection = await initdb(dbServer.getUri());
 
     let { user, organisation } = await createUserAccountWithOrganisation();
-    defaultUser = user;
+    defaultUserAccount = user;
     defaultOrganisation = organisation;
     let { service } = await addServiceAccountToOrganisation(
       'some service',
@@ -68,7 +68,7 @@ describe('db connection', () => {
 
     userRecipient = await GrantRecipientModel.getUserAccountRecipient(
       defaultOrganisation._id,
-      defaultUser._id
+      defaultUserAccount._id
     );
 
     serviceRecipient = await GrantRecipientModel.getServiceAccountRecipient(

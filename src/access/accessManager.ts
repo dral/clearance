@@ -25,41 +25,41 @@ export const ensureAccessCodesExist = (
 
 export const grantPermanentAccessToUserAccount = async (
   organisation: Types.ObjectId,
-  userAccountId: Types.ObjectId,
-  accessId: Types.ObjectId
+  userAccount: Types.ObjectId,
+  access: Types.ObjectId
 ): Promise<Grant> => {
   let recipient = await GrantRecipientModel.getUserAccountRecipient(
     organisation,
-    userAccountId
+    userAccount
   );
   return new GrantModel({
     type: 'permanent',
     recipient: recipient._id,
-    access: accessId,
+    access: access,
   }).save();
 };
 
 export const grantTemporarytAccessToUserAccount = async (
   expiresAt: Date,
   organisation: Types.ObjectId,
-  userAccountId: Types.ObjectId,
-  accessId: Types.ObjectId
+  userAccount: Types.ObjectId,
+  access: Types.ObjectId
 ): Promise<Grant> => {
   let recipient = await GrantRecipientModel.getUserAccountRecipient(
     organisation,
-    userAccountId
+    userAccount
   );
   return new GrantModel({
     type: 'temporary',
     expiresAt,
     recipient: recipient._id,
-    access: accessId,
+    access: access,
   }).save();
 };
 
 export const grantPermanentAccessToServiceAccount = async (
   serviceAccount: Types.ObjectId,
-  accessId: Types.ObjectId
+  access: Types.ObjectId
 ): Promise<Grant> => {
   let recipient = await GrantRecipientModel.getServiceAccountRecipient(
     serviceAccount
@@ -67,14 +67,14 @@ export const grantPermanentAccessToServiceAccount = async (
   return new GrantModel({
     type: 'permanent',
     recipient: recipient._id,
-    access: accessId,
+    access,
   }).save();
 };
 
 export const grantTemporarytAccessToServiceAccount = async (
   expiresAt: Date,
   serviceAccount: Types.ObjectId,
-  accessId: Types.ObjectId
+  access: Types.ObjectId
 ): Promise<Grant> => {
   let recipient = await GrantRecipientModel.getServiceAccountRecipient(
     serviceAccount
@@ -83,7 +83,7 @@ export const grantTemporarytAccessToServiceAccount = async (
     type: 'temporary',
     expiresAt,
     recipient: recipient._id,
-    access: accessId,
+    access,
   }).save();
 };
 
@@ -96,4 +96,8 @@ export const createAccessProfileFromCodes = async (
     description,
     specificAccesses: specificAccesses.map((access) => access._id),
   }).save();
+};
+
+export const grantHistory = async (recipient: Types.ObjectId) => {
+  return GrantModel.find({ recipient }).populate('access');
 };

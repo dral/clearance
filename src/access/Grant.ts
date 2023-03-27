@@ -13,11 +13,11 @@ export interface Grant {
 
 interface GrantModel extends Model<Grant> {
   findGrantsForRecipient(
-    recipientId: Types.ObjectId,
+    recipient: Types.ObjectId,
     date?: Date
   ): Promise<Grant[]>;
   findAccessForRecipient(
-    recipientId: Types.ObjectId,
+    recipient: Types.ObjectId,
     date?: Date
   ): Promise<string[]>;
 }
@@ -54,9 +54,9 @@ const schema = new Schema<Grant, GrantModel>(
 
 schema.static(
   'findGrantsForRecipient',
-  async function (recipientId: Types.ObjectId, asOf: Date = new Date()) {
+  async function (recipient: Types.ObjectId, asOf: Date = new Date()) {
     return GrantModel.find({
-      recipient: recipientId,
+      recipient,
       status: 'active',
       $or: [
         {
@@ -71,11 +71,11 @@ schema.static(
 schema.static(
   'findAccessForRecipient',
   async function (
-    recipientId: Types.ObjectId,
+    recipient: Types.ObjectId,
     asOf: Date = new Date()
   ): Promise<string[]> {
     const activeGrants = await GrantModel.findGrantsForRecipient(
-      recipientId,
+      recipient,
       asOf
     );
     let accessIds = activeGrants.map((grant) => grant.access);

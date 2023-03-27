@@ -27,7 +27,7 @@ describe('Manage organisation and users', () => {
     await dbServer.stop();
   });
 
-  it('should create a new userwith a new default organisation', async () => {
+  it('should create a new user with a new default organisation', async () => {
     const { user, organisation } = await createUserAccountWithOrganisation();
     expect(user).not.toBeNull();
     expect(user).toHaveProperty('organisations');

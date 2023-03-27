@@ -18,7 +18,7 @@
     "clean": "tsc --build --clean",
     "tsc": "tsc",
     "test": "ts-node ./node_modules/jest/bin/jest.js --detectOpenHandles",
-    "test:watch": "ts-node ./node_modules/jest/bin/jest.js --watch --cache --detectOpenHandles src",
+    "test:watch": "ts-node ./node_modules/jest/bin/jest.js --watch --reporters=\"default\" --onlyChanged src",
     "lint": "eslint .",
     "license:check": "license-checker --production --excludePrivatePackages --onlyAllow 'MIT;ISC;0BSD;BSD-2-Clause;BSD-3-Clause;CC-BY-3.0;CC0-1.0;Apache-2.0;Python-2.0' --summary",
     "license:report": "license-checker --production --excludePrivatePackages --relativeLicensePath --json --out licenses.json",

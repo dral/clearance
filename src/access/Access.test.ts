@@ -9,13 +9,13 @@ describe('db connection', () => {
 
   beforeAll(async () => {
     dbServer = await MongoMemoryServer.create();
-    connection = await initdb(); // use persistent test db
-    // connection = await initdb(dbServer.getUri());
+    // connection = await initdb(); // use persistent test db
+    connection = await initdb(dbServer.getUri());
   });
 
-  afterAll(() => {
-    connection.close();
-    dbServer.stop();
+  afterAll(async () => {
+    await connection.close();
+    await dbServer.stop();
   });
 
   afterEach(async () => {
@@ -173,5 +173,23 @@ describe('db connection', () => {
     await specificAccess2.save();
 
     expect((await accessProfile.accessList()).sort()).toMatchObject([]);
+  });
+
+  it('should get a specific access from its code', async () => {
+    const accessCode = 'toto';
+    let specificAccess = await new SpecificAccessModel({
+      code: accessCode,
+    }).save();
+
+    const foundAccess = await AccessModel.getAccessByCode(accessCode);
+
+    expect(foundAccess._id).toEqual(specificAccess._id);
+  });
+
+  it('should create a specific access from its code', async () => {
+    const accessCode = 'toto';
+    const foundAccess = await AccessModel.getAccessByCode(accessCode);
+
+    expect(foundAccess.code).toEqual(accessCode);
   });
 });

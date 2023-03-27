@@ -8,13 +8,13 @@ describe('db connection', () => {
     dbServer = await MongoMemoryServer.create();
   });
 
-  afterAll(() => {
-    dbServer.stop();
+  afterAll(async () => {
+    await dbServer.stop();
   });
 
   it('should connect to a running db', async () => {
-    const dbHost: string = dbServer.getUri();
-    const connection = await initdb(dbHost);
+    // const dbHost: string = dbServer.getUri();
+    const connection = await initdb(dbServer.getUri());
     expect(connection.readyState).toBe(mongoose.ConnectionStates.connected);
     connection.close();
   });

@@ -54,12 +54,14 @@ const schema = new Schema<Grant, GrantModel>(
 
 schema.static(
   'findGrantsForRecipient',
-  function (recipientId: Types.ObjectId, asOf: Date = new Date()) {
+  async function (recipientId: Types.ObjectId, asOf: Date = new Date()) {
     return GrantModel.find({
       recipient: recipientId,
       status: 'active',
       $or: [
-        { $and: [{ type: 'temprary' }, { expiresAt: { $lt: asOf } }] },
+        {
+          $and: [{ type: 'temporary' }, { expiresAt: { $gt: asOf } }],
+        },
         { type: 'permanent' },
       ],
     });
@@ -76,15 +78,14 @@ schema.static(
       recipientId,
       asOf
     );
-
     let accessIds = activeGrants.map((grant) => grant.access);
     let accesses = await AccessModel.find({ _id: { $in: accessIds } });
-
     const fullAccessList = await Promise.all(
       accesses.map((access) => {
         return access.accessList();
       })
     );
+
     return fullAccessList.flat().sort();
   }
 );

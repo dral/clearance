@@ -19,6 +19,7 @@ interface GrantRecipientModel
 export interface GrantRecipientMethods {
   accessList(asOf: Date): Promise<string[]>;
 }
+
 const schema = new mongoose.Schema<GrantRecipient, GrantRecipientModel>(
   {},
   { timestamps: true, discriminatorKey: 'kind' }

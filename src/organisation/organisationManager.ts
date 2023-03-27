@@ -1,9 +1,8 @@
 // create a new user, either with an existing organisation
 // or with a new default organisation
-// grant access to an user
 // register a service for an organisation
-// grant access to a service
 // remove a service
+
 // add an owner to an organisation
 // remove an owner of the organisation (avoid no owner)
 // remove an user from the organisation
@@ -15,7 +14,7 @@ import { ServiceAccountModel } from './ServiceAccount';
 
 // User management
 
-export const addUserToOrganisation = async (
+export const addUserAccountToOrganisation = async (
   userId: Types.ObjectId,
   organisationId: Types.ObjectId
 ) => {
@@ -37,19 +36,19 @@ export const addUserToOrganisation = async (
   };
 };
 
-export const createUserWithOrganisation = async () => {
+export const createUserAccountWithOrganisation = async () => {
   let user = await new UserAccountModel().save();
   let organisation = await new OrganisationModel({ name: 'default' }).save();
 
-  return addUserToOrganisation(user._id, organisation._id);
+  return addUserAccountToOrganisation(user._id, organisation._id);
 };
 
-export const createUserInExistingOrganisation = async (
+export const createUserAccountInExistingOrganisation = async (
   organisationId: Types.ObjectId
 ) => {
   let user = await new UserAccountModel().save();
 
-  return addUserToOrganisation(user._id, organisationId);
+  return addUserAccountToOrganisation(user._id, organisationId);
 };
 
 export const leaveOrganisation = async (
@@ -76,7 +75,7 @@ export const leaveOrganisation = async (
 
 // Service management
 
-export const addServiceToOrganisation = async (
+export const addServiceAccountToOrganisation = async (
   name: string,
   organisationId: Types.ObjectId
 ) => {
@@ -101,7 +100,7 @@ export const addServiceToOrganisation = async (
   };
 };
 
-export const deactivateService = async (serviceId: Types.ObjectId) => {
+export const deactivateServiceAccount = async (serviceId: Types.ObjectId) => {
   let service = await ServiceAccountModel.findById(serviceId);
 
   if (!service) {
@@ -112,7 +111,7 @@ export const deactivateService = async (serviceId: Types.ObjectId) => {
   return service.deactivate();
 };
 
-export const activateService = async (serviceId: Types.ObjectId) => {
+export const activateServiceAccount = async (serviceId: Types.ObjectId) => {
   let service = await ServiceAccountModel.findById(serviceId);
 
   if (!service) {
@@ -123,7 +122,7 @@ export const activateService = async (serviceId: Types.ObjectId) => {
   return service.activate();
 };
 
-export const deleteService = async (serviceId: Types.ObjectId) => {
+export const deleteServiceAccount = async (serviceId: Types.ObjectId) => {
   let service = await ServiceAccountModel.findById(serviceId);
 
   if (!service) {

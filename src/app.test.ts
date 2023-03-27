@@ -6,7 +6,6 @@ const server = setupServer(app);
 
 describe('app server', () => {
   it('does nothing for now', () => {
-    return request(server).get('/')
-      .expect(200);
+    return request(server).get('/').expect(200);
   });
 });

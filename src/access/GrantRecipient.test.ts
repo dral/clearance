@@ -10,9 +10,9 @@ import { UserAccount } from 'src/organisation/UserAccount';
 import { Organisation } from 'src/organisation/Organisation';
 import { ServiceAccount } from 'src/organisation/ServiceAccount';
 import {
-  addServiceToOrganisation,
-  createUserWithOrganisation,
-} from 'src/organisation/service';
+  addServiceAccountToOrganisation,
+  createUserAccountWithOrganisation,
+} from 'src/organisation/organisationManager';
 
 describe('db connection', () => {
   let dbServer: MongoMemoryServer;
@@ -24,22 +24,22 @@ describe('db connection', () => {
 
   beforeAll(async () => {
     dbServer = await MongoMemoryServer.create();
-    connection = await initdb(); // use persistent test db
-    // connection = await initdb(dbServer.getUri());
+    // connection = await initdb(); // use persistent test db
+    connection = await initdb(dbServer.getUri());
 
-    let { user, organisation } = await createUserWithOrganisation();
+    let { user, organisation } = await createUserAccountWithOrganisation();
     defaultUser = user;
     defaultOrganisation = organisation;
-    let { service } = await addServiceToOrganisation(
+    let { service } = await addServiceAccountToOrganisation(
       'some service',
       organisation._id
     );
     defaultServiceAccount = service;
   });
 
-  afterAll(() => {
-    connection.close();
-    dbServer.stop();
+  afterAll(async () => {
+    await connection.close();
+    await dbServer.stop();
   });
 
   afterEach(async () => {

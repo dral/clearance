@@ -10,9 +10,9 @@ import { UserAccount } from 'src/organisation/UserAccount';
 import { Organisation } from 'src/organisation/Organisation';
 import { ServiceAccount } from 'src/organisation/ServiceAccount';
 import {
-  addServiceToOrganisation,
-  createUserWithOrganisation,
-} from 'src/organisation/service';
+  addServiceAccountToOrganisation,
+  createUserAccountWithOrganisation,
+} from 'src/organisation/organisationManager';
 import {
   AccessModel,
   AccessProfile,
@@ -38,15 +38,21 @@ describe('db connection', () => {
   let access3: SpecificAccess;
   let accessProfile: AccessProfile;
 
+  const now = new Date();
+  const tomorrow = new Date(now);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const afterTomorrow = new Date(tomorrow);
+  afterTomorrow.setDate(afterTomorrow.getDate() + 1);
+
   beforeAll(async () => {
     dbServer = await MongoMemoryServer.create();
-    connection = await initdb(); // use persistent test db
-    // connection = await initdb(dbServer.getUri());
+    // connection = await initdb(); // use persistent test db
+    connection = await initdb(dbServer.getUri());
 
-    let { user, organisation } = await createUserWithOrganisation();
+    let { user, organisation } = await createUserAccountWithOrganisation();
     defaultUser = user;
     defaultOrganisation = organisation;
-    let { service } = await addServiceToOrganisation(
+    let { service } = await addServiceAccountToOrganisation(
       'some service',
       organisation._id
     );
@@ -73,8 +79,8 @@ describe('db connection', () => {
   afterAll(async () => {
     await AccessModel.deleteMany({});
     await GrantRecipientModel.deleteMany({});
-    connection.close();
-    dbServer.stop();
+    await connection.close();
+    await dbServer.stop();
   });
 
   afterEach(async () => {
@@ -118,6 +124,65 @@ describe('db connection', () => {
     expect(userGrants.map((grant) => grant._id)).toMatchObject([
       userGrant1._id,
       userGrant2._id,
+    ]);
+  });
+
+  it('should exclude expired grants', async () => {
+    const userGrant1 = await new GrantModel({
+      recipient: userRecipient._id,
+      access: access1._id,
+      type: 'permanent',
+    }).save();
+
+    const userGrant2 = await new GrantModel({
+      recipient: userRecipient._id,
+      access: accessProfile._id,
+      type: 'temporary',
+      expiresAt: tomorrow,
+    }).save();
+
+    // another grant
+    await new GrantModel({
+      recipient: serviceRecipient._id, // not the same recipient
+      access: access1._id,
+      type: 'permanent',
+    }).save();
+
+    // tomorrow
+    let tomorrowGrants = await GrantModel.findGrantsForRecipient(
+      userRecipient._id,
+      tomorrow
+    );
+
+    expect(tomorrowGrants.length).toBe(1);
+
+    expect(tomorrowGrants.map((grant) => grant._id)).toMatchObject([
+      userGrant1._id,
+    ]);
+
+    // today
+    let todayGrants = await GrantModel.findGrantsForRecipient(
+      userRecipient._id,
+      now
+    );
+
+    expect(todayGrants.length).toBe(2);
+
+    expect(todayGrants.map((grant) => grant._id)).toMatchObject([
+      userGrant1._id,
+      userGrant2._id,
+    ]);
+
+    // after tomorrow
+    let laterGrants = await GrantModel.findGrantsForRecipient(
+      userRecipient._id,
+      afterTomorrow
+    );
+
+    expect(laterGrants.length).toBe(1);
+
+    expect(laterGrants.map((grant) => grant._id)).toMatchObject([
+      userGrant1._id,
     ]);
   });
 

@@ -10,6 +10,12 @@ export interface AccessMethods {
   accessList(): Promise<string[]>;
 }
 
+interface AccessModel
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  extends Model<Access, {}, AccessMethods> {
+  getAccessByCode(code: string): Promise<SpecificAccess>;
+}
+
 const schema = new mongoose.Schema<Access>(
   {
     description: {
@@ -26,11 +32,18 @@ const schema = new mongoose.Schema<Access>(
   { timestamps: true, discriminatorKey: 'kind' }
 );
 
-export const AccessModel = mongoose.model<
-  Access,
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  Model<Access, {}, AccessMethods>
->('Access', schema);
+schema.static('getAccessByCode', async function (code: string) {
+  let existing = await SpecificAccessModel.findOne({ code });
+  if (existing) {
+    return Promise.resolve(existing);
+  }
+  return new SpecificAccessModel({ code }).save();
+});
+
+export const AccessModel = mongoose.model<Access, AccessModel>(
+  'Access',
+  schema
+);
 
 export interface SpecificAccess extends Access {
   code: string;
@@ -41,6 +54,7 @@ const specificAccessesSchema = new mongoose.Schema<SpecificAccess>({
     type: 'string',
     unique: true,
     required: true,
+    index: true,
   },
 });
 

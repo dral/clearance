@@ -13,8 +13,8 @@ describe('Health check', () => {
     dbServer = await MongoMemoryServer.create();
   });
 
-  afterAll(() => {
-    dbServer.stop();
+  afterAll(async () => {
+    await dbServer.stop();
   });
 
   it('should give ok for a running server', async () => {

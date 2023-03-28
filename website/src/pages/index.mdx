@@ -1,7 +1,95 @@
-# clearance documentation
+# Clearance
 
-Explain what this project does
+Clearance is an access gatekeeper system for rest applications. It takes care of the classic user authentication along with a layer of access control conceived to handle possibly complex customer organisations with custom sets of access profiles for your application.
+
+Clearance is aimed at SAAS applications that provide services to end customers or organisations of any kind. Organisation in this context refers to either business, educational or teams of individuals that need to share resources and cooperate in the environment of your application.
+
+Clearance consists of both an *API* and a *library*. The API is responsible for managing user and access data while the library is intended to facilitate integration on the target application's behaviour.
+
+Clearance makes no assumption on what kind of services your application provides. Instead, it keeps track of *access codes* that correspond to specific application features or possible actions on your application resources. As an example consider the following accesses:
+
+- `salesLead.create`,
+- `contract.delete`,
+- `applicationWorflowStep.approve`,
+- `invoice.emit`,
+- `monthlyReport.publish`.
+
+These very specific access codes can be aggregated into *access profiles* that will represent different use cases (`Marketing manager`, `Sales agent`, `Customer care agent`, `Invoicing robot`).
+
+These profiles as well as individual access can be granted to users in your customer organisation. Note that your own organisation, this is, the organisation that operates the SAAS application, can use this system as well to manage their access to admin or "backoffice" features as well as to their customers' data in order to fulfill their service (customer support teams for example).
+
 
 ## Features
 
-- List features
+### Advanced users and organisation management
+
+Allow your customers to manage their users and easily fine control the different access profiles to your application's features.
+
+- Create a new user along with a new organisation
+- Add a new user to an existing organisation
+- Remove an user from an organisation
+
+### Same login, multiple organisations
+
+An user can use the same account to access multiple organisations. Each organisation can grant applicative access to an user independently of how many other organisations the user may be a part of.
+
+- Invite an existing user to an organisation
+
+### Service accounts
+
+Secure integration with each organisation's managed third party services through independent service accounts.
+
+- Create a service account for an organisation
+- Control activation, deactivation and deletion of service accounts
+
+### Access profile managemnt
+
+Register and manage access codes that correspond to specific application functions. Group them by comprehensive access profiles to match different use cases.
+
+- Create a specific access code
+- Create an access profile from a set of access codes
+- Control activation, deactivation and deprecation of access codes and profiles
+
+### Permanent and temporary access grants
+
+Keep a stable set of access grants for users and service accounts while keeping the flexibility for historized exceptions to handle exceptional business situations.
+
+- Grant a permanent access
+- Grant a temporary access
+- Revoke an access
+- List all access for a recipient as of a given date
+
+### Multiple out of the box authentication methods
+
+Chosse the authentication methods that fits your application use cases, including the classic user-password login, 2fa, external oauth providers, ephemeral codes challenges, api keys or magic links.
+
+### Session audit and management
+
+At any point, your users (or organisation admins) can audit current sessions and disable old ones or compromised devices' sessions.
+
+- List all active sessions for an user
+- Revoke a session
+
+### Keep your application simple
+
+From the backend application's perspective api requests will already carry the full status of allowed access, user and organisation. Take advantage of easy to integrate middlewares for access validation and minimal authentication level requirements for sensitive operations.
+
+- Require access verification for request processing
+- Negotiate/ensure minimal user authentication level before sensible request processing
+
+Once the requests have been authentified, the application will receive a request containing a list of all the access that the user is allowed to. The application will then block or authorise the requested action by verifying that the specific access that it expects is indeed allowed for the request.
+
+Consider the following schematic usage on the application side :
+
+```ts title="invoiceRouter.ts"
+import clearanceSdk from 'clearance';
+
+/* ... */
+
+invoiceRouter.put(
+  '/invoice/:id/emmit',
+  clearanceSdk.allow('invoice.emit'), // will either issue a 401 response or continue
+  (req, res) => {
+    /* ... */
+  });
+```
